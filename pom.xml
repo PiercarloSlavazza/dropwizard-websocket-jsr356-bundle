@@ -4,7 +4,7 @@
 
     <groupId>be.tomcools</groupId>
     <artifactId>dropwizard-websocket-jee7-bundle</artifactId>
-    <version>2.1.7-SNAPSHOT</version>
+    <version>2.1.7</version>
     <packaging>jar</packaging>
 
     <name>dropwizard-websocket-jee7-bundle</name>
@@ -37,6 +37,12 @@
         <dropwizard.version>2.0.12</dropwizard.version>
         <jetty.version>9.4.30.v20200611</jetty.version>
         <java.version>1.8</java.version>
+        <explurimis_repositories.base_path>/var/explurimis_repositories</explurimis_repositories.base_path>
+        <explurimis_repositories.host>64.225.83.199</explurimis_repositories.host>
+        <explurimis_repositories.user>explurimis</explurimis_repositories.user>
+        <explurimis_repositories.maven.url>
+            scp://${explurimis_repositories.user}@${explurimis_repositories.host}${explurimis_repositories.base_path}/maven
+        </explurimis_repositories.maven.url>
     </properties>
 
     <dependencies>
@@ -104,18 +110,14 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>3.5.2</version>
+            </extension>
+        </extensions>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -239,7 +241,34 @@
         </profile>
     </profiles>
 
+    <distributionManagement>
+        <repository>
+            <id>explurimis.repository.maven</id>
+            <url>
+                scp://${explurimis_repositories.user}@${explurimis_repositories.host}${explurimis_repositories.base_path}/maven
+            </url>
+        </repository>
+        <snapshotRepository>
+            <id>explurimis.repository.maven.snapshots</id>
+            <url>
+                scp://${explurimis_repositories.user}@${explurimis_repositories.host}${explurimis_repositories.base_path}/maven_snapshots
+            </url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
+        <repository>
+            <id>explurimis.repository.maven</id>
+            <name>Explurimis Maven Repository</name>
+            <url>${explurimis_repositories.maven.url}</url>
+        </repository>
+        <repository>
+            <id>explurimis.repository.maven.snapshots</id>
+            <name>Explurimis Maven SNAPSHOTS Repository</name>
+            <url>
+                scp://${explurimis_repositories.user}@${explurimis_repositories.host}${explurimis_repositories.base_path}/maven_snapshots
+            </url>
+        </repository>
         <repository>
             <id>central</id>
             <name>Central Repository</name>
@@ -250,5 +279,6 @@
             </snapshots>
         </repository>
     </repositories>
+
 
 </project>
